@@ -4,8 +4,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.locators.RelativeLocator;
+
 
 import java.sql.Time;
 import java.util.*;
@@ -25,24 +25,36 @@ public class AmazonProductPriceSorting {
         searchBox.submit();
 
         // Read product names and associated main price on 1st search result page
-        List<WebElement> parentElement = driver.findElements(By.cssSelector("[class='a-section a-spacing-small a-spacing-top-small']"));
-        System.out.println(parentElement.size());
         int priceInt=0;
         String price=null;
         Map<String, Integer> productAndPriceMap = new HashMap<>();
-        
-        for (int i=0;i<parentElement.size();i++) {
+        List<WebElement> productNames = driver.findElements(By.cssSelector("[class='a-size-mini a-spacing-none a-color-base s-line-clamp-2']"));
+        System.out.println(productNames.size());
+        for(int i=0;i<productNames.size();i++) { 
+        	WebElement parentDiv = driver.findElement(RelativeLocator.with(By.cssSelector("[class='puisg-col-inner']")).near(productNames.get(i)));
+    		try {
+        		price=parentDiv.findElement(By.cssSelector("[class='a-price-whole']")).getText();
+        		priceInt= Integer.parseInt(price.replaceAll("[^0-9]", ""));
+        	}
+        	catch(Exception NoSuchElementException) {
+        		priceInt=0;
+        	}
+    		System.out.println(priceInt);
+        	productAndPriceMap.put(productNames.get(i).getText(),priceInt );  
+        }
+       /* for (int i=0;i<priceElement.size();i++) {
             try {
-            	price = parentElement.get(i).findElement(By.cssSelector("[class='a-price-whole']")).getText();
+            	price = priceElement.get(i).findElement(By.cssSelector("[class='a-price-whole']")).getText();
             	priceInt = Integer.parseInt(price.replaceAll("[^0-9]", ""));
             } 
             catch (Exception NoSuchElementException) {	
             	priceInt = 0;
             }
-            String product=parentElement.get(i).findElement(By.cssSelector("[class='a-size-medium a-color-base a-text-normal']")).getText();
-            System.out.println(product);
-            //productAndPriceMap.put(product,priceInt );     
-        }
+            price
+            //String product=parentElement.get(i).findElement(By.cssSelector("[class='a-size-medium a-color-base a-text-normal']")).getText();
+            //System.out.println(product);
+            productAndPriceMap.put(productNames.get(i).getText(),priceInt );     
+        }*/
             
         // Sort the products by price
         List<Map.Entry<String, Integer>> sortedProductPrices = new ArrayList<>(productAndPriceMap.entrySet());
@@ -54,6 +66,6 @@ public class AmazonProductPriceSorting {
         }
 
         // Close the browser
-        driver.quit();
+        //driver.quit();
     }
 }
