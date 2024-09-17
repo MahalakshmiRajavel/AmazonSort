@@ -28,8 +28,7 @@ public class AmazonProductPriceSorting {
         int priceInt=0;
         String price=null;
         Map<String, Integer> productAndPriceMap = new HashMap<>();
-        List<WebElement> productNames = driver.findElements(By.cssSelector("[class='a-size-mini a-spacing-none a-color-base s-line-clamp-2']"));
-        System.out.println(productNames.size());
+        List<WebElement> productNames = driver.findElements(By.cssSelector("[class='a-size-medium a-color-base a-text-normal']"));
         for(int i=0;i<productNames.size();i++) { 
         	WebElement parentDiv = driver.findElement(RelativeLocator.with(By.cssSelector("[class='puisg-col-inner']")).near(productNames.get(i)));
     		try {
@@ -39,33 +38,19 @@ public class AmazonProductPriceSorting {
         	catch(Exception NoSuchElementException) {
         		priceInt=0;
         	}
-    		System.out.println(priceInt);
         	productAndPriceMap.put(productNames.get(i).getText(),priceInt );  
         }
-       /* for (int i=0;i<priceElement.size();i++) {
-            try {
-            	price = priceElement.get(i).findElement(By.cssSelector("[class='a-price-whole']")).getText();
-            	priceInt = Integer.parseInt(price.replaceAll("[^0-9]", ""));
-            } 
-            catch (Exception NoSuchElementException) {	
-            	priceInt = 0;
-            }
-            price
-            //String product=parentElement.get(i).findElement(By.cssSelector("[class='a-size-medium a-color-base a-text-normal']")).getText();
-            //System.out.println(product);
-            productAndPriceMap.put(productNames.get(i).getText(),priceInt );     
-        }*/
             
         // Sort the products by price
         List<Map.Entry<String, Integer>> sortedProductPrices = new ArrayList<>(productAndPriceMap.entrySet());
         sortedProductPrices.sort(Map.Entry.comparingByValue());
-
+        
         // Print the sorted products one by one
         for (Map.Entry<String,Integer> entry : sortedProductPrices) {
             System.out.println(entry.getValue() + " " + entry.getKey());
         }
 
         // Close the browser
-        //driver.quit();
+        driver.quit();
     }
 }
